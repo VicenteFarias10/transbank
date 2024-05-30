@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+</head>
+<body>
+    <h1>Inicio</h1>
+    <p>¡Haz clic en el botón para iniciar el proceso de pago!</p>
+    <button id="payButton">Comprar</button>
+
+    <script>
+        document.getElementById("payButton").addEventListener("click", async () => {
+    const createResponse = await fetch("/payment/createTransaction", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            buyOrder: "O-5111", // Orden de compra fija para pruebas
+            sessionId: "S-75821", // ID de sesión fijo para pruebas
+            amount: 1693, // Monto fijo para pruebas
+            returnUrl: "http://tbk-node-test.continuumhq.dev/webpay_plus/commit"
+        })
+    }).then(response => response.json());
+
+    console.log('Respuesta de creación de transacción:', createResponse);
+
+    // Guardar el token de transacción en una variable
+    const token = createResponse.token;
+
+    // Redirigir al usuario a la URL de Webpay Plus con el token de transacción
+    window.location.href = `${createResponse.url}?token_ws=${token}`;
+});
+
+    </script>
+</body>
+</html>
